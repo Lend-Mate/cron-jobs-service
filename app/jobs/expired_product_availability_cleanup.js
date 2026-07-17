@@ -35,41 +35,46 @@ function createCronTask(cronExpression, client) {
 }
 
 async function startExpiredProductAvailabilityCron(client) {
-  console.log('Starting expired product availability cleanup cron job...');
-  let currentCronExpression = await fetchCronExpression(client);
+  try {
+    console.log('Starting expired product availability cleanup cron job...');
+    let currentCronExpression = await fetchCronExpression(client);
 
-  if (!currentCronExpression) {
-    throw new Error(`Cron expression for job ${JOB_NAME} not found.`);
-  }
+    if (!currentCronExpression) {
+      throw new Error(`Cron expression for job ${JOB_NAME} not found.`);
+    }
 
-  let scheduledTask = createCronTask(currentCronExpression, client);
+    let scheduledTask = createCronTask(currentCronExpression, client);
 
-  setInterval(async () => {
-    try {
-      const latestCronExpression = await fetchCronExpression(client);
+    setInterval(async () => {
+      try {
+        const latestCronExpression = await fetchCronExpression(client);
 
-      if (!latestCronExpression) {
-        console.warn(`Cron expression for job ${JOB_NAME} was removed from DB. Keeping existing schedule.`);
-        scheduledTask.stop();
-        currentCronExpression = null;
-        return;
-      }
-
-      if (latestCronExpression !== currentCronExpression) {
-        if (!cron.validate(latestCronExpression)) {
-          console.error(`New cron expression is invalid: ${latestCronExpression}. Keeping existing schedule.`);
+        if (!latestCronExpression) {
+          console.warn(`Cron expression for job ${JOB_NAME} was removed from DB. Keeping existing schedule.`);
+          scheduledTask.stop();
+          currentCronExpression = null;
           return;
         }
 
-        scheduledTask.stop();
-        scheduledTask = createCronTask(latestCronExpression, client);
-        currentCronExpression = latestCronExpression;
-        console.log(`Rescheduled ${JOB_NAME} with new cron expression: ${currentCronExpression}`);
+        if (latestCronExpression !== currentCronExpression) {
+          if (!cron.validate(latestCronExpression)) {
+            console.error(`New cron expression is invalid: ${latestCronExpression}. Keeping existing schedule.`);
+            return;
+          }
+
+          scheduledTask.stop();
+          scheduledTask = createCronTask(latestCronExpression, client);
+          currentCronExpression = latestCronExpression;
+          console.log(`Rescheduled ${JOB_NAME} with new cron expression: ${currentCronExpression}`);
+        }
+      } catch (error) {
+        console.error('Error reloading cron expression from DB:', error);
       }
-    } catch (error) {
-      console.error('Error reloading cron expression from DB:', error);
-    }
-  }, POLL_INTERVAL_MS);
+    }, POLL_INTERVAL_MS);
+  } catch (error) {
+    console.error('Error starting expired product availability cleanup cron job:', error);
+
+  }
 }
 
 module.exports = {
