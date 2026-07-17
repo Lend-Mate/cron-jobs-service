@@ -6,6 +6,7 @@ networks:
 
 services:
   cron-jobs-service:
+    image: "cron-jobs-service"
     build: .
     environment:
       DB_HOST: postgres
