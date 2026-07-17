@@ -24,8 +24,6 @@ function createCronTask(cronExpression, client) {
       try {
         console.log(`Cron fired for ${JOB_NAME} at ${new Date().toISOString()}`);
         await getProductsByExpiredDateAndReason();
-
-        console.log(`Running ${JOB_NAME} at ${new Date().toISOString()}`);
         await updateLastRunAt(client, JOB_NAME);
       } catch (error) {
         console.error('Expired product availability cleanup error:', error);
