@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  cron-jobs-service:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: cron_jobs_service_db
+      DB_USER: lendmate
+      DB_PASSWORD: lendmate
+    restart: unless-stopped
+
+volumes:
+  db_data:

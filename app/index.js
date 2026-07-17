@@ -4,7 +4,7 @@ const createRoutes = require('./controller');
 const { startExpiredProductAvailabilityCron } = require('./jobs/expired_product_availability_cleanup');
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 app.use(express.json());
 app.use('/', createRoutes(client));
