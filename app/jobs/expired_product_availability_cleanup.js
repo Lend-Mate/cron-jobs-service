@@ -35,6 +35,7 @@ function createCronTask(cronExpression, client) {
 }
 
 async function startExpiredProductAvailabilityCron(client) {
+  console.log('Starting expired product availability cleanup cron job...');
   let currentCronExpression = await fetchCronExpression(client);
 
   if (!currentCronExpression) {
