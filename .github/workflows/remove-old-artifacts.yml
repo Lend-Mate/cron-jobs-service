@@ -1,0 +1,29 @@
+name: Remove old artifacts
+
+on:
+  # schedule:
+  # - cron: '0 1 * * *'
+
+  workflow_dispatch:
+    inputs:
+      artifact_age:
+        description: "Delete artifacts older than (e.g. 5 days, 1 month, 2 years)"
+        required: false
+        default: "2 days"
+        type: string
+
+jobs:
+  remove-old-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      actions: write
+
+    steps:
+      - name: Remove old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: ${{ github.event.inputs.artifact_age || '2 days' }}
+          skip-tags: ${{ github.event.inputs.skip_tags || 'false' }}
+          skip-recent: ${{ github.event.inputs.skip_recent != '0' && github.event.inputs.skip_recent || '' }}
