@@ -22,6 +22,7 @@ function createCronTask(cronExpression, client) {
     cronExpression,
     async () => {
       try {
+        console.log(`Cron fired for ${JOB_NAME} at ${new Date().toISOString()}`);
         await getProductsByExpiredDateAndReason();
 
         console.log(`Running ${JOB_NAME} at ${new Date().toISOString()}`);
@@ -38,7 +39,8 @@ async function startExpiredProductAvailabilityCron(client) {
   try {
     console.log('Starting expired product availability cleanup cron job...');
     let currentCronExpression = await fetchCronExpression(client);
-
+    
+    console.log(`Fetched cron expression for ${JOB_NAME}: ${currentCronExpression}`);
     if (!currentCronExpression) {
       throw new Error(`Cron expression for job ${JOB_NAME} not found.`);
     }
