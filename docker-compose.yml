@@ -1,15 +1,21 @@
 version: '3.9'
 
+networks:
+  lendmate-net:
+    external: true
+
 services:
   cron-jobs-service:
     build: .
     environment:
-      DB_HOST: db
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: cron_jobs_service_db
       DB_USER: lendmate
       DB_PASSWORD: lendmate
     restart: unless-stopped
+    networks:
+      - lendmate-net
 
 volumes:
   db_data:
