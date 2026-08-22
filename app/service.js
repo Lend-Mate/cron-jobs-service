@@ -9,7 +9,7 @@ async function updateLastRunAt(client, jobName) {
 async function getProductsByExpiredDateAndReason() {
   try {
     const currentDate = new Date().toISOString();
-    const url = 'http://178.104.91.123/api/product-availability/internal/expired-rented';
+    const url = `${process.env.HOST_URL}/product-availability/internal/expired-rented`;
     const response = await fetch(url);
 
     // Check if the response status is 200-299
@@ -24,7 +24,38 @@ async function getProductsByExpiredDateAndReason() {
   }
 }
 
+async function convertPendingToConfirmed() {
+  try {
+    const url = `${process.env.HOST_URL}/orders/convert-pending-to-confirmed`;
+    const response = await fetch(url);
+
+    // Check if the response status is 200-299
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+  }
+}
+
+async function convertConfirmedToDelivered() {
+  try {
+    console.log({env: process.env.HOST_URL})
+    const url = `${process.env.HOST_URL}/orders/convert-confirmed-to-delivered`;
+    const response = await fetch(url);
+
+    // Check if the response status is 200-299
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+  }
+}
+
 module.exports = {
   updateLastRunAt,
-  getProductsByExpiredDateAndReason
+  getProductsByExpiredDateAndReason,
+  convertPendingToConfirmed,
+  convertConfirmedToDelivered
 };
