@@ -10,8 +10,6 @@ HemenKirala ekosistemindeki zamanlanmış işleri çalıştıran küçük bir No
 - Her işin son çalıştırılma zamanını `jobs.last_run_at` alanında güncellemek.
 - Cron ifadesi veritabanında değiştirildiğinde servisi yeniden başlatmadan schedule'ı güncellemek.
 
-> Not: `app/index.js` içinde `expired_product_availability_cleanup` job'ının başlatılması şu anda yorum satırındadır. Bu nedenle mevcut varsayılan çalışmada yalnızca `change_status_of_orders` job'ı başlatılır.
-
 ## Mimari
 
 ```mermaid
